@@ -19,8 +19,6 @@ int main() {
   long stack[9] = {0};
   long *dynv;
 
-  long rand[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-
   statbuf = mmap(0, sizeof(struct stat), PROT_WRITE | PROT_READ, MAP_PRIVATE | MAP_ANONYMOUS, 0, 0);
 
   testfile = open("test.bin", O_RDONLY);
@@ -34,7 +32,7 @@ int main() {
 
   Elf64_Ehdr *ehdr = (Elf64_Ehdr *)t;
 	Elf64_Phdr *phdr = (Elf64_Phdr *)(t + ehdr->e_phoff);
-  e_entry = (void *) testbuf + 0x6d6; // TODO: lookup _start_c symbol or jump to entry point
+  e_entry = (void *) testbuf + 0xf86; // TODO: lookup _start_c symbol or jump to entry point
 
   // ARGC, ARGV
   stack[0] = 1;
