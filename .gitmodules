@@ -1,0 +1,4 @@
+[submodule "deps/musl"]
+	path = deps/musl
+	url = https://github.com/acammack-r7/musl
+	branch = stealthy-loading
