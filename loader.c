@@ -3,10 +3,21 @@
 #include <unistd.h>
 
 #include <stdio.h>
+#include <string.h>
 
 #include <elf.h>
 
 #include <sys/mman.h>
+
+unsigned char *st_str(unsigned char *elf, long index) {
+  Elf64_Ehdr *ehdr = (Elf64_Ehdr *)elf;
+
+  Elf64_Shdr *shdr = (Elf64_Shdr *)(elf + ehdr->e_shoff);
+  while (shdr->sh_type != SHT_SYMTAB) shdr++;
+  while (shdr->sh_type != SHT_STRTAB) shdr++; // The first strtab after the symtab
+
+  return elf + shdr->sh_offset + index;
+}
 
 int main() {
   long testfile, testelf;
@@ -32,7 +43,14 @@ int main() {
 
   Elf64_Ehdr *ehdr = (Elf64_Ehdr *)t;
 	Elf64_Phdr *phdr = (Elf64_Phdr *)(t + ehdr->e_phoff);
-  e_entry = (void *) testbuf + 0xf86; // TODO: lookup _start_c symbol or jump to entry point
+
+  Elf64_Shdr *shdr = (Elf64_Shdr *)(t + ehdr->e_shoff);
+  while (shdr->sh_type != SHT_SYMTAB) shdr++;
+
+  Elf64_Sym *symb = (Elf64_Sym *)(t + shdr->sh_offset);
+  while (strcmp(st_str(t, symb->st_name), "_start_c") != 0) symb++;
+
+  e_entry = (void *) testbuf + symb->st_value; // TODO: make work with entry point?
 
   // ARGC, ARGV
   stack[0] = 1;
@@ -44,7 +62,7 @@ int main() {
   stack[4] = 0;
 
   // AUXV
-  stack[5] = AT_BASE; stack[6] = testbuf; // TODO: maybe let musl calculate
+  stack[5] = AT_BASE; stack[6] = testbuf; // TODO: maybe let musl calculate?
   stack[7] = AT_NULL; stack[8] = 0;
 
   // Dynamic linker info:
