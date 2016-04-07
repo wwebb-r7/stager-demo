@@ -42,12 +42,12 @@ int main(int argc, char **argv)
   testfile = open(argv[1], O_RDONLY);
   if (testfile < 0) {
     perror(argv[1]);
-    exit(1);
+    exit(EXIT_FAILURE);
   }
   testelf = open(argv[2], O_RDONLY);
   if (testelf < 0) {
     perror(argv[2]);
-    exit(1);
+    exit(EXIT_FAILURE);
   }
 
   fstat(testfile, statbuf);
