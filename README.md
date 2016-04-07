@@ -6,10 +6,7 @@ To run (requires Linux):
   * `git submodule init`
   * `git submodule update`
   * `make`
-  * Use `objdump -x test` to find the `_start_c` symbol
-  * Copy the offset into `loader.c:37`
-  * `make` (again)
-  * `./loader`
+  * `./loader test.bin test`
   * You should see `Hello, world!`
 
 
